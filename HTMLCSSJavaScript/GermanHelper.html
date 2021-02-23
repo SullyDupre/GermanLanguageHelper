@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>German Language Helper</title>
+        <meta charset="UTF-8">
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+        
+        <!-- CSS Code Here-->
+        <style>
+            svg {
+                width: 720px;
+                height: 360px;
+                border:1px solid gray;
+            }
+        </style>
+    </head>
+
+    <!-- Body Code Here-->
+    <body>
+        <div class="jumbotron text-left flex-row justify-around">
+            <div>
+              <h1>Language Helper</h1>
+            </div>
+
+          </div>
+          <div class="flex-row w-full h-full justify-around">
+            <div class="" id="filters">
+              <!-- <h2>Options</h2> -->
+              <form>
+                <div>
+                  <h4>Test Options</h4>
+                  <div class="">
+                    <label for="number_of_words">Words</label>
+                    <input
+                      type="number"
+                      value="30"
+                      id="number_of_words"
+                      onchange=""
+                      min="1"
+                      max="1000"
+                    />
+                  </div>
+                  <div id="type-of-test-row">
+                    <label for="type-of-test-row">Class:</label>
+                    <select id="type" onchange="changeTest()">
+                      <option value="GermanEnglish">German To English</option>
+                      <option value="EnglishGerman">English To German</option>
+                    </select>
+                  </div>
+
+                </div>
+              </form>
+              <form>
+                <input type="button" value="Start" class='StartReset'>
+                </form>
+              <!--- Area where the graphs will display-->
+            </div>
+            <div class="">
+              <h3>Test</h3>
+              <label id = "WordDisplayed"> 
+              </label> 
+              <br></br>
+              <label id = "Result"> 
+                 
+              </label>
+              <br></br> 
+              <svg id="test-area" height="360px" width="720px"></svg>
+            </div>
+          </div>
+        
+    </body>
+    
+    <!-- JS Code Here-->
+    <script>
+        const button = document.querySelector('.StartReset');
+
+        var typeOfTest
+
+        button.addEventListener('click', updateButton);
+
+        function updateButton() {
+            if (button.value === 'Start') {
+                button.value = 'Reset';
+                if (typeOfTest == "GermanEnglish") {
+                  testStartGerman()
+                }         
+                else if (typeOfTest == "EnglishGerman") {
+                  testStartEnglish()
+                }         
+            } else {
+                button.value = 'Start';
+                testStop()
+            }
+        }
+
+        let langaugeData
+        
+        d3.csv('German.csv').then(data => {
+            langaugeData = data
+            console.log(data)
+            changeTest()
+        })
+
+        function changeTest(){
+            typeOfTest = d3.select('#type').property('value')
+            console.log(typeOfTest)
+        }
+
+        function testStartGerman(){
+          var num_words = d3.select('#number_of_words').property('value')
+          console.log('test started')
+          console.log(num_words)
+          for (var index = 0; index < num_words; index++){
+            var wordDisplayed = langaugeData[index]["German"]
+            var correctWord = langaugeData[index]["in English"]
+            var guess = prompt(wordDisplayed)
+            if (guess == correctWord){
+              document.getElementById("Result").innerHTML = "Correct"
+            }
+            else {
+              document.getElementById("Result").innerHTML = "Incorrect"
+            }
+            
+          }
+        }
+        function testStartEnglish(){
+          var num_words = d3.select('#number_of_words').property('value')
+          console.log('test started')
+          console.log(num_words)
+          for (var index = 0; index < num_words; index++){
+            var correctWord = langaugeData[index]["German"]
+            var wordDisplayed = langaugeData[index]["in English"]
+            var guess = prompt(wordDisplayed)
+            if (guess == correctWord){
+              document.getElementById("Result").innerHTML = "Correct"
+            }
+            else {
+              document.getElementById("Result").innerHTML = "Incorrect"
+            }
+            
+          }
+        }
+        function testStop(){
+          console.log('test stopped')
+        }
+
+        function displayWord(word){
+          document.getElementById("WordDisplayed").innerHTML = word
+        }
+
+        function displayResult(isTrue){
+          if (isTrue == 1){
+            document.getElementById("Result").innerHTML = "Correct"
+          }
+          else {
+            document.getElementById("Result").innerHTML = "Incorrect"
+          }
+        }
+    </script>
+</html>
